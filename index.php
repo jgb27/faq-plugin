@@ -1,8 +1,8 @@
 <?php
 /*
- * Plugin Name: FAQ Plugin
- * Plugin URI: https://github.com/jgb27/faq-plugin
- * Description: O FAQ Plugin é uma solução poderosa e intuitiva para gerenciar e exibir perguntas frequentes no seu site WordPress. Ideal para sites que buscam fornecer respostas rápidas e organizadas para dúvidas comuns dos usuários, este plugin oferece uma interface simples para a criação, edição e apresentação de FAQs. Com suporte a tipos de post personalizados, shortcode para fácil integração e recursos de interatividade para uma experiência de usuário melhorada, o FAQ Plugin é a ferramenta definitiva para melhorar a comunicação e o suporte ao cliente no seu site.
+ * Plugin Name: The Simple FAQ
+   * Plugin URI: https://github.com/jgb27/the-simple-faq
+ * Description: O The Simple FAQ é uma solução poderosa e intuitiva para gerenciar e exibir perguntas frequentes no seu site WordPress. Ideal para sites que buscam fornecer respostas rápidas e organizadas para dúvidas comuns dos usuários, este plugin oferece uma interface simples para a criação, edição e apresenação de FAQs. Com suporte a tipos de post personalizados, shortcode para fácil integração e recursos de interatividade para uma experiência de usuário melhorada, o The Simple FAQ é a ferramenta definitiva para melhorar a comunicação e o suporte ao cliente no seu site.
  * Version: 1.0
  * Author: João Gustavo S. Bispo
  * Author URI: https://www.instagram.com/jgbiispo/
@@ -28,10 +28,10 @@ O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU
 function faq_custom_post_type() {
     // Definindo os rótulos para o Custom Post Type
     $labels = array(
-        'name'               => 'FAQs',
-        'singular_name'      => 'FAQ',
-        'menu_name'          => 'FAQs',
-        'name_admin_bar'     => 'FAQ',
+        'name'               => 'Simple FAQs',
+        'singular_name'      => 'Simple FAQ',
+        'menu_name'          => 'Simple FAQ',
+        'name_admin_bar'     => 'Simple FAQ',
         'add_new'            => 'Adicionar Nova',
         'add_new_item'       => 'Adicionar Nova FAQ',
         'new_item'           => 'Nova FAQ',
@@ -104,7 +104,7 @@ add_shortcode('faq', 'faq_shortcode');
 
 function faq_styles() {
     // Enfileira o estilo do plugin
-    wp_enqueue_style('faq-style', plugins_url('faq-style.css', __FILE__), array(), '1.0');
+    wp_enqueue_style('faq-style', plugins_url('style.css', __FILE__), array(), '1.0');
 }
 
 // Hook para enfileirar estilos no frontend
@@ -112,7 +112,7 @@ add_action('wp_enqueue_scripts', 'faq_styles');
 
 function faq_scripts() {
     // Enfileira o script do plugin
-    wp_enqueue_script('faq-script', plugins_url('faq-script.js', __FILE__), array('jquery'), '1.0', true);
+    wp_enqueue_script('faq-script', plugins_url('script.js', __FILE__), array('jquery'), '1.0', true);
 }
 
 // Hook para enfileirar scripts no frontend
