@@ -1,14 +1,12 @@
 <?php
+
 /*
- * Plugin Name: The Simple FAQ
-   * Plugin URI: https://github.com/jgb27/the-simple-faq
- * Description: O The Simple FAQ é uma solução poderosa e intuitiva para gerenciar e exibir perguntas frequentes no seu site WordPress. Ideal para sites que buscam fornecer respostas rápidas e organizadas para dúvidas comuns dos usuários, este plugin oferece uma interface simples para a criação, edição e apresenação de FAQs. Com suporte a tipos de post personalizados, shortcode para fácil integração e recursos de interatividade para uma experiência de usuário melhorada, o The Simple FAQ é a ferramenta definitiva para melhorar a comunicação e o suporte ao cliente no seu site.
- * Version: 1.0
- * Author: João Gustavo S. Bispo
- * Author URI: https://www.instagram.com/jgbiispo/
- * License: MIT
- * Requires at least: 6.0
- * Requires PHP: 8.0
+Plugin Name: Redirect Simple
+Plugin URI: 
+Description: Plugin simples para WordPress que facilita a criação e gerenciamento de redirecionamentos de URLs de forma intuitiva e segura.
+Author: João Gustavo S. Bispo
+Version: 1.0
+License: MIT 
 */
 
 /*
@@ -25,95 +23,181 @@ Atribuição — Você deve dar o crédito apropriado, prover um link para o rep
 O SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO ÀS GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM PROPÓSITO PARTICULAR E NÃO VIOLAÇÃO. EM NENHUMA HIPÓTESE OS AUTORES OU DETENTORES DOS DIREITOS AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANOS OU OUTRA RESPONSABILIDADE, SEJA EM UMA AÇÃO DE CONTRATO, ATO ILÍCITO OU DE OUTRA FORMA, DECORRENTE DE, FORA DE OU EM CONEXÃO COM O SOFTWARE OU O USO OU OUTRAS NEGOCIAÇÕES NO SOFTWARE.
 */
 
-function faq_custom_post_type() {
-    // Definindo os rótulos para o Custom Post Type
-    $labels = array(
-        'name'               => 'Simple FAQs',
-        'singular_name'      => 'Simple FAQ',
-        'menu_name'          => 'Simple FAQ',
-        'name_admin_bar'     => 'Simple FAQ',
-        'add_new'            => 'Adicionar Nova',
-        'add_new_item'       => 'Adicionar Nova FAQ',
-        'new_item'           => 'Nova FAQ',
-        'edit_item'          => 'Editar FAQ',
-        'view_item'          => 'Ver FAQ',
-        'all_items'          => 'Todas as FAQs',
-        'search_items'       => 'Procurar FAQs',
-        'parent_item_colon'  => 'FAQ Pai:',
-        'not_found'          => 'Nenhuma FAQ encontrada.',
-        'not_found_in_trash' => 'Nenhuma FAQ encontrada na lixeira.',
-    );
+defined('ABSPATH') or die('No script kiddies please!');
 
-    // Definindo os argumentos para o Custom Post Type
-    $args = array(
-        'labels'             => $labels,
-        'public'             => true, // Disponível publicamente
-        'publicly_queryable' => true, // Consultável publicamente
-        'show_ui'            => true, // Mostrar na interface de administração
-        'show_in_menu'       => true, // Mostrar no menu de administração
-        'query_var'          => true, // Variável de consulta
-        'rewrite'            => array( 'slug' => 'faq' ), // URL amigável
-        'capability_type'    => 'post', // Tipo de capacidade
-        'has_archive'        => true, // Arquivo disponível
-        'hierarchical'       => false, // Sem hierarquia
-        'menu_position'      => null, // Posição no menu
-        'supports'           => array( 'title', 'editor' ), // Suporte a título e editor
+// Adiciona a página de configurações ao menu de administração
+function rs_add_admin_menu()
+{
+    add_management_page(
+        'Redirect',
+        'Redirecionamento de links',
+        'manage_options',
+        'RS',
+        'rs_setting_page',
+        0
     );
-
-    // Registrando o Custom Post Type
-    register_post_type( 'faq', $args );
 }
 
-// Hook para inicializar o Custom Post Type
-add_action( 'init', 'faq_custom_post_type' );
+add_action('admin_menu', 'rs_add_admin_menu');
 
-function faq_shortcode() {
-    // Configura os argumentos para consultar as FAQs
-    $args = array(
-        'post_type' => 'faq',
-        'posts_per_page' => -1, // Obter todas as FAQs
+// Enfileira a folha de estilo
+function rs_enqueue_admin_style()
+{
+    wp_enqueue_style('rs_admin_styles', plugin_dir_url(__FILE__) . 'styles.css', array(), '1.0');
+}
+add_action('admin_enqueue_scripts', 'rs_enqueue_admin_style');
+
+// Exibe a página de configurações
+function rs_setting_page()
+{
+?>
+    <div class="wrap">
+        <h1>Redirect Simple</h1>
+        <?php if (isset($_GET['settings-updated']) && $_GET['settings-updated']) : ?>
+            <div id="message" class="updated notice is-dismissible">
+                <p>Configurações salvas com sucesso.</p>
+                <button type="button" class="notice-dismiss" id="btn-close-feedback">
+                    <span class="screen-reader-text">Dispensar este aviso.</span>
+                </button>
+            </div>
+        <?php endif; ?>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('rs_settings_group');
+            do_settings_sections('rs_settings');
+            wp_nonce_field('rs_save_settings', 'rs_settings_nonce');
+            submit_button();
+            ?>
+        </form>
+    </div>
+<?php
+}
+
+// Inicializa as configurações
+function rs_settings_init()
+{
+    register_setting('rs_settings_group', 'rs_redirects', 'rs_sanitize_redirects');
+
+    add_settings_section(
+        'rs_settings_section',
+        'Configurações de Redirecionamento',
+        'rs_settings_section_callback',
+        'rs_settings'
     );
 
-    // Executa a consulta
-    $faqs = new WP_Query($args);
+    add_settings_field(
+        'rs_redirects',
+        'Redirecionamentos',
+        'rs_redirects_render',
+        'rs_settings',
+        'rs_settings_section'
+    );
+}
+add_action('admin_init', 'rs_settings_init');
 
-    // Inicia a variável de saída
-    $output = '<div class="faqs">';
+// Callback para a seção de configurações
+function rs_settings_section_callback()
+{
+    echo 'Insira as URLs para redirecionamento. Use o botão "Novo Redirecionamento" para adicionar múltiplos redirecionamentos.';
+}
 
-    // Loop para exibir cada FAQ
-    while ($faqs->have_posts()) {
-        $faqs->the_post();
-        $output .= '<div class="faq">';
-        $output .= '<h3>' . get_the_title() . '</h3>'; // Título da FAQ
-        $output .= '<div class="faq-content">' . get_the_content() . '</div>'; // Conteúdo da FAQ
-        $output .= '</div>';
+// Renderiza o campo de redirecionamentos
+function rs_redirects_render()
+{
+    $redirects = get_option('rs_redirects', []);
+?>
+    <div id="rs-redirects">
+        <?php if (!empty($redirects)) : ?>
+            <?php foreach ($redirects as $index => $redirect) : ?>
+                <div class="rs-redirect">
+                    <input type="text" name="rs_redirects[<?php echo esc_attr($index); ?>][from]" value="<?php echo esc_attr($redirect['from']); ?>" placeholder="Redirecionar De">
+                    <input type="text" name="rs_redirects[<?php echo esc_attr($index); ?>][to]" value="<?php echo esc_attr($redirect['to']); ?>" placeholder="Redirecionar Para">
+                    <button type="button" class="rs-remove-redirect">Remover</button>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+    <button type="button" class="button" id="rs-add-redirect">Novo Redirecionamento</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var redirectsDiv = document.getElementById('rs-redirects');
+            var btnCloseFeedback = document.getElementById('btn-close-feedback');
+            var addRedirectBtn = document.getElementById('rs-add-redirect');
+
+            // Adiciona novo redirecionamento
+            addRedirectBtn.addEventListener('click', function() {
+                var index = redirectsDiv.children.length;
+                var newRedirect = document.createElement('div');
+                newRedirect.className = 'rs-redirect';
+                newRedirect.innerHTML = '<input type="text" name="rs_redirects[' + index + '][from]" placeholder="Redirecionar De"> ' +
+                    '<input type="text" name="rs_redirects[' + index + '][to]" placeholder="Redirecionar Para"> ' +
+                    '<button type="button" class="button rs-remove-redirect">Remover</button>';
+                redirectsDiv.appendChild(newRedirect);
+            });
+
+            // Remove redirecionamento
+            redirectsDiv.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('rs-remove-redirect')) {
+                    e.target.parentNode.remove();
+                }
+            });
+
+            // Fecha feedback de sucesso
+            btnCloseFeedback.addEventListener('click', function(e) {
+                var msg = document.getElementById('message');
+                msg.style.display = 'none';
+            });
+        });
+    </script>
+<?php
+}
+
+// Sanitiza os redirecionamentos
+function rs_sanitize_redirects($redirects)
+{
+    $sanitized_redirects = [];
+    foreach ($redirects as $redirect) {
+        if (!empty($redirect['from']) && !empty($redirect['to']) && filter_var($redirect['to'], FILTER_VALIDATE_URL)) {
+            $sanitized_redirects[] = [
+                'from' => sanitize_text_field($redirect['from']),
+                'to' => sanitize_text_field($redirect['to']),
+            ];
+        }
     }
-
-    // Finaliza a variável de saída
-    $output .= '</div>';
-
-    // Restaura a consulta original
-    wp_reset_postdata();
-
-    // Retorna a saída para ser exibida no frontend
-    return $output;
+    return $sanitized_redirects;
 }
 
-// Registra o shortcode [faq]
-add_shortcode('faq', 'faq_shortcode');
+// Realiza o redirecionamento
+function rs_redirect()
+{
+    if (!is_admin() && !defined('DOING_AJAX')) {
+        $redirects = get_option('rs_redirects', []);
+        $request_uri = $_SERVER['REQUEST_URI'];
 
-function faq_styles() {
-    // Enfileira o estilo do plugin
-    wp_enqueue_style('faq-style', plugins_url('style.css', __FILE__), array(), '1.0');
+        foreach ($redirects as $redirect) {
+            if (strpos($request_uri, $redirect['from']) !== false) {
+                wp_redirect($redirect['to'], 301);
+                exit;
+            }
+        }
+    }
 }
+add_action('template_redirect', 'rs_redirect');
 
-// Hook para enfileirar estilos no frontend
-add_action('wp_enqueue_scripts', 'faq_styles');
+// Verifica o nonce ao salvar as configurações
+function rs_save_settings()
+{
+    check_admin_referer('rs_save_settings', 'rs_settings_nonce');
 
-function faq_scripts() {
-    // Enfileira o script do plugin
-    wp_enqueue_script('faq-script', plugins_url('script.js', __FILE__), array('jquery'), '1.0', true);
+    if (isset($_POST['rs_settings_nonce']) && wp_verify_nonce($_POST['rs_settings_nonce'], 'rs_save_settings')) {
+        update_option('rs_redirects', $_POST['rs_redirects']);
+        wp_redirect(admin_url('admin.php?page=RS&settings-updated=true'));
+        exit;
+    } else {
+        wp_redirect(admin_url('admin.php?page=RS&settings-updated=false'));
+        exit;
+    }
 }
-
-// Hook para enfileirar scripts no frontend
-add_action('wp_enqueue_scripts', 'faq_scripts');
+add_action('admin_post_rs_save_settings', 'rs_save_settings');
+?>
