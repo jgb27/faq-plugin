@@ -7,6 +7,8 @@
  * Author: João Gustavo S. Bispo
  * Author URL: https://www.instagram.com/jgbiispo/
  * License: MIT
+ * Requires at least: 6.0
+ * Requires PHP: 8.0
 */
 
 /*
