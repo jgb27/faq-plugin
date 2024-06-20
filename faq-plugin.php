@@ -5,7 +5,7 @@
  * Description: O FAQ Plugin é uma solução poderosa e intuitiva para gerenciar e exibir perguntas frequentes no seu site WordPress. Ideal para sites que buscam fornecer respostas rápidas e organizadas para dúvidas comuns dos usuários, este plugin oferece uma interface simples para a criação, edição e apresentação de FAQs. Com suporte a tipos de post personalizados, shortcode para fácil integração e recursos de interatividade para uma experiência de usuário melhorada, o FAQ Plugin é a ferramenta definitiva para melhorar a comunicação e o suporte ao cliente no seu site.
  * Version: 1.0
  * Author: João Gustavo S. Bispo
- * Author URL: https://www.instagram.com/jgbiispo/
+ * Author URI: https://www.instagram.com/jgbiispo/
  * License: MIT
  * Requires at least: 6.0
  * Requires PHP: 8.0
