@@ -5,7 +5,7 @@ Plugin Name: Redirect Simple
 Plugin URI: 
 Description: Plugin simples para WordPress que facilita a criação e gerenciamento de redirecionamentos de URLs de forma intuitiva e segura.
 Author: João Gustavo S. Bispo
-Version: 1.0
+Version: 1.0.1
 License: MIT 
 */
 
