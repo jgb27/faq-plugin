@@ -104,7 +104,7 @@ add_shortcode('faq', 'faq_shortcode');
 
 function faq_styles() {
     // Enfileira o estilo do plugin
-    wp_enqueue_style('faq-style', plugins_url('faq-style.css', __FILE__));
+    wp_enqueue_style('faq-style', plugins_url('faq-style.css', __FILE__), array(), '1.0');
 }
 
 // Hook para enfileirar estilos no frontend
@@ -112,7 +112,7 @@ add_action('wp_enqueue_scripts', 'faq_styles');
 
 function faq_scripts() {
     // Enfileira o script do plugin
-    wp_enqueue_script('faq-script', plugins_url('faq-script.js', __FILE__), array('jquery'), null, true);
+    wp_enqueue_script('faq-script', plugins_url('faq-script.js', __FILE__), array('jquery'), '1.0', true);
 }
 
 // Hook para enfileirar scripts no frontend
