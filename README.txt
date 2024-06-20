@@ -8,7 +8,7 @@ License: MIT
 
 == Description ==
 
-The Simple FAQ is a powerful and intuitive solution for managing and displaying frequently asked questions on your WordPress site. Ideal for sites looking to provide quick and organized answers to common user queries, this plugin offers a straightforward interface for creating, editing, and presenting FAQs. With support for custom post types, shortcode for easy integration, and interactive features for an enhanced user experience, The Simple FAQ is the definitive tool for improving communication and customer support on your site.
+ O The Simple FAQ é uma solução poderosa e intuitiva para gerenciar e exibir perguntas frequentes no seu site WordPress. Ideal para sites que buscam fornecer respostas rápidas e organizadas para dúvidas comuns dos usuários, este plugin oferece uma interface simples para a criação, edição e apresenação de FAQs. Com suporte a tipos de post personalizados, shortcode para fácil integração e recursos de interatividade para uma experiência de usuário melhorada, o The Simple FAQ é a ferramenta definitiva para melhorar a comunicação e o suporte ao cliente no seu site.
 
 == Installation ==
 
