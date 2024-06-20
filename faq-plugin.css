@@ -1,0 +1,19 @@
+.faqs {
+    margin: 20px 0; /* Margem para a lista de FAQs */
+}
+
+.faq {
+    margin-bottom: 10px; /* Margem inferior para cada FAQ */
+}
+
+.faq h3 {
+    cursor: pointer; /* Cursor de ponteiro ao passar sobre o título */
+}
+
+.faq-content {
+    display: none; /* Ocultar o conteúdo da FAQ por padrão */
+}
+
+.faq-content.faq-content-show {
+    display: block; /* Exibir o conteúdo da FAQ quando a classe 'faq-content-show' estiver presente */
+}
